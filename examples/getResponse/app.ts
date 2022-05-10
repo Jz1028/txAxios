@@ -1,6 +1,6 @@
-import dispatchRequest from "../../src/core/dispatchRequest";
+import axios from "../../src/axios";
 
-dispatchRequest({
+axios({
   method: "post",
   url: "/api/getResponse",
   data: {
@@ -11,7 +11,7 @@ dispatchRequest({
   console.log(res);
 });
 
-dispatchRequest({
+axios({
   method: "post",
   url: "/api/getResponse",
   responseType: "json",

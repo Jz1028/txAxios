@@ -8,7 +8,7 @@ axios({
   }
 });
 
-axios("/api/addParameters", {
+axios("/api/addParameters",{
   method: "post",
   data: {
     msg: "hello"

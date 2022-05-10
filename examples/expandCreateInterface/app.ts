@@ -27,8 +27,9 @@ instance2({
   url: "/api/expandCreateInterface",
   method: "post",
   data: qs.stringify({
-    a: 1
+    a:1 
   })
 }).then(res => {
   console.log(res.data);
 });
+

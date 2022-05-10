@@ -1,31 +1,32 @@
 import axios from "../../src/axios";
 
+
 axios({
-  url: "/api/expandInterface/post",
-  method: "post",
+  url: '/api/expandInterface/post',
+  method: 'post',
   data: {
-    msg: "hi"
+    msg: 'hi'
   }
-});
+})
 
 axios.request({
-  url: "/api/expandInterface/post",
-  method: "post",
+  url: '/api/expandInterface/post',
+  method: 'post',
   data: {
-    msg: "hello"
+    msg: 'hello'
   }
-});
+})
 
-axios.get("/api/expandInterface/get");
+axios.get('/api/expandInterface/get')
 
-axios.options("/api/expandInterface/options");
+axios.options('/api/expandInterface/options')
 
-axios.delete("/api/expandInterface/delete");
+axios.delete('/api/expandInterface/delete')
 
-axios.head("/api/expandInterface/head");
+axios.head('/api/expandInterface/head')
 
-axios.post("/api/expandInterface/post", { msg: "post" });
+axios.post('/api/expandInterface/post', { msg: 'post' })
 
-axios.put("/api/expandInterface/put", { msg: "put" });
+axios.put('/api/expandInterface/put', { msg: 'put' })
 
-axios.patch("/api/expandInterface/patch", { msg: "patch" });
+axios.patch('/api/expandInterface/patch', { msg: 'patch' })

@@ -1,53 +1,39 @@
-import { AxiosPromise, AxiosRequestConfig, AxiosResponse } from "../types";
-import xhr from "./xhr";
-import { buildURL } from "../helpers/url";
-import { transformRequest, transformResponse } from "../helpers/data";
-import { flattenHeaders, processHeaders } from "../helpers/header";
-import transform from "./transform";
-import isAbsoluteURL from "../helpers/isAbsoluteURL";
-import combineURLs from "../helpers/combineURLs";
+import { transformRequest, transformResponse } from '../helpers/data';
+import { flattenHeaders, processHeaders } from '../helpers/headers';
+import { bulidURL } from '../helpers/url';
+import {  AxiosPromise, AxiosRequestConfig, AxiosResponse } from '../types';
+import xhr from './xhr';
 
-function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
-  throwIfCancellationRequested(config);
-  processConfig(config);
-  return xhr(config).then(res => {
-    return transformResponseData(res);
-  });
+function dispatchRequest(config:AxiosRequestConfig):AxiosPromise{
+  processConfig(config)
+  return xhr(config).then((res:AxiosResponse)=>transformResponseData(res))
 }
 
 function processConfig(config: AxiosRequestConfig): void {
   config.url = transformUrl(config);
-  config.data = transform(config.data, config.headers, config.transformRequest);
-  config.headers = flattenHeaders(config.headers, config.method!);
+  config.headers = transformHeaders(config);
+  config.data = transformRequestData(config);
+  config.headers = flattenHeaders(config.headers,config.method!)
+}
+function transformUrl(config:AxiosRequestConfig){
+  const {url,params} = config
+  return bulidURL(url as string,params)
 }
 
-export function transformUrl(config: AxiosRequestConfig): string {
-  let { url, params, paramsSerializer, baseURL } = config;
-  if (baseURL && !isAbsoluteURL(url!)) {
-    url = combineURLs(baseURL, url);
-  }
-  return buildURL(url!, params, paramsSerializer);
+function transformRequestData(config:AxiosRequestConfig):any{
+  return transformRequest(config.data)
 }
 
-function transformRequestData(config: AxiosRequestConfig): any {
-  const { data } = config;
-  return transformRequest(data);
+function transformHeaders(config:AxiosRequestConfig):any{
+  const  {headers ={},data} =config
+  return processHeaders(headers,data)
 }
 
-function transformHeaders(config: AxiosRequestConfig): any {
-  const { headers = {}, data } = config;
-  return processHeaders(headers, data);
+function transformResponseData(res:AxiosResponse):AxiosResponse{
+  res.data = transformResponse(res.data)
+  return res
 }
 
-function transformResponseData(res: AxiosResponse): AxiosResponse {
-  res.data = transform(res.data, res.headers, res.config.transformResponse);
-  return res;
-}
 
-// 如果已经请求取消，则抛出异常。
-function throwIfCancellationRequested(config: AxiosRequestConfig) {
-  if (config.cancelToken) {
-    config.cancelToken.throwIfRequested();
-  }
-}
-export default dispatchRequest;
+
+export default dispatchRequest

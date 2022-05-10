@@ -52,7 +52,7 @@ module.exports = {
     proxy: {
       // 配置跨域
       "/api/": {
-        target: "http://192.168.1.106:3000",
+        target: "http://192.168.1.9:3000",
         ws: true,
         changOrigin: true
       }

@@ -1,35 +1,22 @@
-import { AxiosRequestConfig, AxiosStatic } from "./types";
-import Axios from "./core/Axios";
-import { extend } from "./helpers/util";
-import defaults from "./defaultes";
-import mergeConfig from "./core/mergeConfig";
-import CancelToken from "./cancel/CancelToken";
-import Cancel from "./cancel/Cancel";
-import isCancel from "./cancel/isCancel";
+import CancelToken from './cancel/CancelToken';
+import Axios from './core/Axios';
+import mergeConfig from './core/mergeConfig';
+import defaults from './default';
+import { extend } from './helpers/util';
+import { AxiosInstance, AxiosRequestConfig, AxiosStatic } from './types';
 
-function getAxios(config: AxiosRequestConfig): AxiosStatic {
-  const context = new Axios(config);
-  const axios = Axios.prototype.request.bind(context);
+function getAxios(defaultsConfig:AxiosRequestConfig):AxiosStatic{
+  const context  = new Axios(defaultsConfig)
+  const axios = Axios.prototype.request.bind(context) 
 
-  extend(axios, context);
+  extend(axios, context );
 
-  return axios as AxiosStatic;
+  
+  return axios as AxiosStatic
 }
-
-const axios = getAxios(defaults);
-
+const axios = getAxios(defaults)
+axios.CancelToken = CancelToken
 axios.create = function(config: AxiosRequestConfig) {
   return getAxios(mergeConfig(defaults, config));
 };
-axios.CancelToken = CancelToken;
-axios.Cancel = Cancel;
-axios.isCancel = isCancel;
-axios.all = function(promises) {
-  return Promise.all(promises);
-};
-axios.spread = function(callback) {
-  return function wrap(arr) {
-    return callback.apply(null, arr);
-  };
-};
-export default axios;
+export default axios

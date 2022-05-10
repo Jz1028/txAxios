@@ -1,6 +1,5 @@
-import dispatchRequest from "../../src/core/dispatchRequest";
-
-dispatchRequest({
+import axios from "../../src/axios";
+axios({
   method: "post",
   url: "/api/handleRequestHeader/post",
   data: {
@@ -9,12 +8,12 @@ dispatchRequest({
   }
 });
 
-dispatchRequest({
+axios({
   method: "post",
   url: "/api/handleRequestHeader/post",
   headers: {
     "content-type": "application/json; charset=UTF-8",
-    Accept: "application/json,text/plain,*/*"
+    "Accept": "application/json,text/plain,*/*"
   },
   data: {
     a: 1,
@@ -25,7 +24,7 @@ dispatchRequest({
 const paramsString = "q=URLUtils.searchParams&topic=api";
 const searchParams = new URLSearchParams(paramsString);
 
-dispatchRequest({
+axios({
   method: "post",
   url: "/api/handleRequestHeader/post",
   data: searchParams

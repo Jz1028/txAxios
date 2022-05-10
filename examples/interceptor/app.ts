@@ -20,12 +20,13 @@ axios.interceptors.request.use(config => {
 
 // 响应拦截器1
 axios.interceptors.response.use(response => {
+  response.data.test = response.data.test ||""
   response.data.test += "响应拦截器1";
   return response;
 });
 
 // 响应拦截器2
-let responseInterceptor2 = axios.interceptors.response.use(response => {
+axios.interceptors.response.use(response => {
   response.data.test += "响应拦截器2";
   return response;
 });
@@ -33,12 +34,14 @@ let responseInterceptor2 = axios.interceptors.response.use(response => {
 // 响应拦截器3
 axios.interceptors.response.use(response => {
   response.data.test += "响应拦截器3";
+  console.log(response.data.test)
   return response;
 });
 
 axios.interceptors.request.eject(requestInterceptor1);
-axios.interceptors.response.eject(responseInterceptor2);
+// axios.interceptors.response.eject(responseInterceptor2);
 
 axios.get("/api/getuser", { headers: { test: "NLRX---" } }).then(res => {
   console.log(res);
 });
+

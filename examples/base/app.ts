@@ -1,10 +1,10 @@
-import dispatchRequest from "../../src/core/dispatchRequest";
+import axios from "../../src/axios";
 
-dispatchRequest({
-  method: "get",
-  url: "/api/base/get",
-  params: {
-    a: 1,
-    b: 2
-  }
-});
+axios({
+    method: 'get',
+    url: '/api/base/get',
+    params: {
+        a: 1,
+        b: 2
+    }
+})
