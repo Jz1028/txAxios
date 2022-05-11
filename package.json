@@ -7,6 +7,7 @@
     "server": "node server/server.js",
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts'",
     "start": "cross-env NODE_ENV=development webpack-dev-server --config './examples/webpack.config.js' --host 192.168.1.9 --open --hot  --port 8000",
+    "start2": "cross-env NODE_ENV=development webpack-dev-server --config './examples/webpack.config.js' --host 192.168.120.248 --open --hot  --port 8000",
     "build": "cross-env NODE_ENV=production webpack --config './examples/webpack.config.js'"
   },
   "keywords": [

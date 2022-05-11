@@ -1,3 +1,4 @@
+import { createError } from '../helpers/error';
 import { parseHeaders } from '../helpers/headers';
 import { AxiosPromise, AxiosRequestConfig, AxiosResponse } from '../types';
 
@@ -11,8 +12,13 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       responseType,
       timeout,
       cancelToken,
+      withCredentials,
     } = config;
     const request = new XMLHttpRequest();
+
+    if (withCredentials) {
+      request.withCredentials = true;
+    }
 
     request.open(method.toUpperCase(), url as string, true);
     Object.keys(headers).forEach((name) => {
@@ -62,18 +68,31 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     };
 
     request.onerror = function() {
-      reject(new Error('网络异常'));
+      reject(createError('Net Error', config, null, request));
     };
 
     request.ontimeout = function() {
-      reject(new Error(`时间超时：${timeout} ms`));
+      reject(
+        createError(
+          `Timeout of ${timeout} ms exceeded`,
+          config,
+          'TIMEOUT',
+          request
+        )
+      );
     };
 
     function handleResponse(response: AxiosResponse): void {
       if (response.status >= 200 && response.status < 300) {
         resolve(response);
       } else {
-        reject(new Error(`Request failed with status code ${response.status}`));
+        createError(
+          `Request failed with status code ${response.status}`,
+          config,
+          null,
+          request.status,
+          response
+        );
       }
     }
   });
