@@ -15,3 +15,6 @@ export function transformResponse(data: any): any {
   }
   return data;
 }
+export function isFormData(val: any): boolean {
+  return typeof val !== 'undefined' && val instanceof FormData;
+}

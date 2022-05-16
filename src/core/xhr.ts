@@ -1,5 +1,8 @@
+import cookie from '../helpers/cookies';
+import { isFormData } from '../helpers/data';
 import { createError } from '../helpers/error';
 import { parseHeaders } from '../helpers/headers';
+import isURLSameOrigin from '../helpers/isURLSameOrigin';
 import { AxiosPromise, AxiosRequestConfig, AxiosResponse } from '../types';
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
@@ -13,13 +16,45 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       timeout,
       cancelToken,
       withCredentials,
+      xsrfCookieName,
+      xsrfHeaderName,
+      // 新增
+      onDownloadProgress,
+      onUploadProgress,
+      auth,
+      validateStatus,
     } = config;
     const request = new XMLHttpRequest();
+
+    let xsrfValue =
+      (withCredentials || isURLSameOrigin(url!)) && xsrfCookieName
+        ? cookie.read(xsrfCookieName)
+        : undefined;
+
+    if (xsrfValue) {
+      headers[xsrfHeaderName!] = xsrfValue;
+    }
 
     if (withCredentials) {
       request.withCredentials = true;
     }
 
+    if (onDownloadProgress) {
+      request.onprogress = onDownloadProgress;
+    }
+
+    if (onUploadProgress) {
+      request.upload.onprogress = onUploadProgress;
+    }
+    if (isFormData(data)) {
+      delete headers['Content-Type'];
+    }
+
+    if (auth) {
+      const username = auth.username || '';
+      const password = auth.password || '';
+      headers['Authorization'] = 'Basic ' + btoa(username + ':' + password);
+    }
     request.open(method.toUpperCase(), url as string, true);
     Object.keys(headers).forEach((name) => {
       if (data === null && name.toLowerCase() === 'content-type') {
@@ -83,15 +118,17 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     };
 
     function handleResponse(response: AxiosResponse): void {
-      if (response.status >= 200 && response.status < 300) {
+      if (!validateStatus || validateStatus(response.status)) {
         resolve(response);
       } else {
-        createError(
-          `Request failed with status code ${response.status}`,
-          config,
-          null,
-          request.status,
-          response
+        reject(
+          createError(
+            `Request failed with status code ${response.status}`,
+            config,
+            null,
+            request.status,
+            response
+          )
         );
       }
     }

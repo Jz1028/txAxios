@@ -24,6 +24,14 @@ export interface AxiosRequestConfig {
   timeout?: number;
   cancelToken?: CancelToken;
   withCredentials?: boolean;
+  xsrfCookieName?: string;
+  xsrfHeaderName?: string;
+  onDownloadProgress?: (e: ProgressEvent) => void;
+  onUploadProgress?: (e: ProgressEvent) => void;
+  auth?: AxiosBasicCredentials;
+  validateStatus?: (status: Number) => Boolean;
+  paramsSerializer?: (params: any) => string;
+  baseURL?: string;
   [props: string]: any;
 }
 export interface AxiosResponse<T = any> {
@@ -70,6 +78,8 @@ export interface Axios {
     data?: any,
     config?: AxiosRequestConfig
   ): AxiosPromise<T>;
+
+  getUri: (config?: AxiosRequestConfig) => string;
 }
 export interface AxiosInstance extends Axios {
   <T = any>(config: AxiosRequestConfig): AxiosPromise<T>;
@@ -96,6 +106,8 @@ export interface AxiosStatic extends AxiosInstance {
   CancelToken: CancelTokenStatic;
   Cancel: CancelStatic;
   isCancel: (value: any) => boolean;
+  all<T>(promises: Array<T | Promise<T>>): Promise<T[]>;
+  spread<T, R>(callback: (...args: T[]) => R): (arr: T[]) => R;
 }
 export interface AxiosInterceptorManager<T> {
   use(resolved: RejectedFn, rejected?: RejectedFn): number;
@@ -128,4 +140,9 @@ export interface Cancel {
 
 export interface CancelStatic {
   new (message?: string): Cancel;
+}
+
+export interface AxiosBasicCredentials {
+  username: string;
+  password: string;
 }

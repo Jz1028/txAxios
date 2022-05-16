@@ -6,7 +6,7 @@ import {
   RejectedFn,
   ResolvedFn,
 } from '../types';
-import dispatchRequest from './dispatchRequest';
+import dispatchRequest, { transformUrl } from './dispatchRequest';
 import InterceptorManager from './interceptorManager';
 import mergeConfig from './mergeConfig';
 
@@ -21,14 +21,18 @@ interface PromiseArr<T> {
 export default class Axios {
   interceptors: Interceptors;
   defaults: AxiosRequestConfig;
-  constructor(defaultConfig:AxiosRequestConfig) {
+  constructor(defaultConfig: AxiosRequestConfig) {
     this.interceptors = {
       request: new InterceptorManager<AxiosRequestConfig>(),
       response: new InterceptorManager<AxiosResponse>(),
     };
-    this.defaults = defaultConfig
+    this.defaults = defaultConfig;
   }
 
+  getUri(config?: AxiosRequestConfig): string {
+    config = mergeConfig(this.defaults, config);
+    return transformUrl(config);
+  }
   request(url: any, config?: any): AxiosPromise {
     if (typeof url === 'string') {
       config = config ? config : {};
@@ -37,7 +41,7 @@ export default class Axios {
       config = url;
     }
 
-    config =mergeConfig(this.defaults,config)
+    config = mergeConfig(this.defaults, config);
     let arr: PromiseArr<any>[] = [
       {
         resolved: dispatchRequest,

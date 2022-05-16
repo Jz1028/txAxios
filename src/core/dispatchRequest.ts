@@ -1,6 +1,8 @@
+import combineURLs from '../helpers/combineURLs';
 import { transformRequest, transformResponse } from '../helpers/data';
 import { flattenHeaders, processHeaders } from '../helpers/headers';
 import { bulidURL } from '../helpers/url';
+import isAbsoluteURL from '../helpers/util';
 import { AxiosPromise, AxiosRequestConfig, AxiosResponse } from '../types';
 import xhr from './xhr';
 
@@ -16,9 +18,12 @@ function processConfig(config: AxiosRequestConfig): void {
   config.data = transformRequestData(config);
   config.headers = flattenHeaders(config.headers, config.method!);
 }
-function transformUrl(config: AxiosRequestConfig) {
-  const { url, params } = config;
-  return bulidURL(url as string, params);
+export function transformUrl(config: AxiosRequestConfig) {
+  let { url, params, paramsSerializer, baseURL } = config;
+  if (baseURL && !isAbsoluteURL(url!)) {
+    url = combineURLs(baseURL, url);
+  }
+  return bulidURL(url!, params, paramsSerializer);
 }
 
 function transformRequestData(config: AxiosRequestConfig): any {

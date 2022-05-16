@@ -121,7 +121,7 @@ router.get('/api/cancel', function(req, res) {
 
 // 添加withCredentials
 const cors = {
-  'Access-Control-Allow-Origin': 'http://192.168.1.106:8000',
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Credentials': true,
   'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
@@ -178,6 +178,12 @@ router.get('/api/allAndSpreadB', function(req, res) {
   res.json({
     data: 'allAndSpreadB',
   });
+});
+
+// 请求状态码合法性校验
+router.get('/api/checkStatus', function(req, res) {
+  res.status(304);
+  res.end();
 });
 app.use(router);
 
